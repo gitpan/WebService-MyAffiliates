@@ -2,7 +2,7 @@ package WebService::MyAffiliates;
 
 use strict;
 use 5.008_005;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use Carp;
 use Mojo::UserAgent;
@@ -70,8 +70,8 @@ sub decode_token {
     $self->request('/feeds.php?FEED_ID=4&TOKENS=' . url_escape(join(',', @tokens)));
 }
 
-## https://myaffiliates.atlassian.net/wiki/display/PUB/Feed+6%3A+User+Transactions+Feed
-sub get_user_transactions {
+## https://myaffiliates.atlassian.net/wiki/display/PUB/Feed+5%3A+Encode+Token
+sub encode_token {
     my $self = shift;
     my %args = @_ % 2 ? %{$_[0]} : @_;
 
@@ -83,10 +83,13 @@ sub get_user_transactions {
     $self->request($url->to_string);
 }
 
-## https://myaffiliates.atlassian.net/wiki/display/PUB/Feed+5%3A+Encode+Token
-sub encode_token {
+## https://myaffiliates.atlassian.net/wiki/display/PUB/Feed+6%3A+User+Transactions+Feed
+sub get_user_transactions {
     my $self = shift;
     my %args = @_ % 2 ? %{$_[0]} : @_;
+
+    $args{FROM_DATE} or croak 'FROM_DATE is reqired.';
+
     my $url = Mojo::URL->new('/feeds.php?FEED_ID=6');
     $url->query(\%args) if %args;
     $self->request($url->to_string);
